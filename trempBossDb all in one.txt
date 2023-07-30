@@ -1,0 +1,1933 @@
+//############################################################
+//################           מגישים           ################ 
+//################ עמית מיירנץ ואליהו ענבי           ################ 
+//############################################################
+
+use TrempBossDB;
+
+db.dropDatabase();
+
+use TrempBossDB;
+
+
+
+// Collections
+db.createCollection("AdminUsers");
+db.AdminUsers.createIndex({ "username": 1 }, { unique: true }); // ensure unique usernames
+db.AdminUsers.createIndex({ "email": 1 }, { unique: true }); // ensure unique email
+db.AdminUsers.createIndex({ "phone_number": 1 }, { unique: true }); // Fixed: Added closing parenthesis
+db.createCollection("Users");
+db.Users.createIndex({ "user_email": 1 }, { unique: true }); // ensure unique user_email
+db.createCollection("GroupRequests");
+db.createCollection("Groups");
+db.Groups.createIndex({ "group_name": 1 }, { unique: true }); // ensure unique Groups
+db.createCollection("JoinGroupRequests");
+db.createCollection("Tremps");
+db.createCollection("TrempsChats");
+db.createCollection("Benefits");
+db.Benefits.createIndex({ "benefit_name": 1 }, { unique: true });
+db.createCollection("UserBenefits");
+
+
+db.AdminUsers.insertOne({
+  username: "admin1",
+  email: "admin123@tremp.com",
+  phone_number: "05896321475", // Fixed: Added closing double quote
+  first_name: "מנהל",
+  last_name: "מערכת",
+  password: "admin123", // remember to hash this password
+  role: "admin",
+  account_activated: true,
+  createdAt: ISODate("2023-05-17T00:00:00Z"),
+  updatedAt: ISODate("2023-05-17T00:00:00Z"),
+  last_login_date: null,
+  deleted: false
+});
+
+db.AdminUsers.insert({
+  username: "helpdesk1",
+  email: "helpdesk123@tremp.com",
+  phone_number: "05896323475", // Fixed: Added closing double quote
+  first_name: "מנהל",
+  last_name: "מערכת",
+  password: "helpdesk123", // remember to hash this password
+  role: "helpdesk",
+  account_activated: true,
+  createdAt: ISODate("2023-05-17T00:00:00Z"),
+  updatedAt: ISODate("2023-05-17T00:00:00Z"),
+  last_login_date: null,
+  deleted: false
+});
+
+
+
+var group1Id = ObjectId();
+var group2Id = ObjectId();
+var group3Id = ObjectId();
+var group4Id = ObjectId();
+var group5Id = ObjectId();
+var userId1 = ObjectId();
+var userId2 = ObjectId();
+var userId3 = ObjectId();
+var userId4 = ObjectId();
+var chatId1 = ObjectId();
+var chatId2 = ObjectId();
+var chatId3 = ObjectId();
+var benefitId1 = ObjectId();
+var benefitId2 = ObjectId();
+var benefitId3 = ObjectId();
+var benefitId4 = ObjectId();
+var benefitId5 = ObjectId();
+
+
+
+db.Users.insertMany([
+  {
+    _id: userId1,
+    user_email: "ely@gmail.com",
+    phone_number: "058-555-1234",
+    password: "ely123", // remember to hash this password
+    photo_URl: "\\ServerName\\Photos\\MyPhoto.jpg",
+    first_name: "אלי",
+    last_name: "ניב",
+    gender: "M",
+    coins: 0,
+    createdAt: ISODate("2023-05-17T00:00:00Z"),
+    updatedAt: ISODate("2023-05-17T00:00:00Z"),
+    last_login_date: null,
+    groups: [group1Id, group2Id],
+    status: "active",
+    deleted: false
+  },
+  {
+    _id: userId2,
+    user_email: "ben@example.com",
+    phone_number: "058-555-5678",
+    password: "ben123", // remember to hash this password
+    photo_URl: "\\ServerName\\Photos\\MyPhoto.jpg",
+    first_name: "בני",
+    last_name: "חן",
+    gender: "F",
+    coins: 0,
+    createdAt: ISODate("2023-05-17T00:00:00Z"),
+    updatedAt: ISODate("2023-05-17T00:00:00Z"),
+    last_login_date: null,
+    groups: [group1Id],
+    status: "active",
+    deleted: false
+  },
+  {
+    _id: userId3,
+    user_email: "gal@example.com",
+    password: "gal123", // remember to hash this password
+    coins: 0,
+    createdAt: ISODate("2023-05-17T00:00:00Z"),
+    updatedAt: ISODate("2023-05-17T00:00:00Z"),
+    last_login_date: null,
+    groups: [group1Id,group5Id],
+    status: "inactive",
+    deleted: false
+  } ,
+  {
+    _id: userId4,
+    user_email: "amit@gmail.com",
+    phone_number: "052-385-5321",
+    password: "amit123", // remember to hash this password
+    photo_URl: "\\ServerName\\Photos\\MyPhoto.jpg",
+    first_name: "עמית",
+    last_name: "ניב",
+    gender: "M",
+    coins: 0,
+    createdAt: ISODate("2023-04-17T00:00:00Z"),
+    updatedAt: ISODate("2023-04-17T00:00:00Z"),
+    last_login_date: ISODate("2023-06-17T00:00:00Z"),
+    groups: [group1Id, group3Id],
+    status: "active",
+    deleted: false
+  },
+]);
+
+
+
+
+db.GroupRequests.insertMany([
+  {
+    _id: ObjectId(),
+    user_id: userId1,
+    group_name: "המכללה הטכנולוגית רופין",
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'pending'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId2,
+    group_name: "המכללה האקדמית רופין",
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'approved'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId1,
+    group_name: "המפעל",
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'pending'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId4,
+    group_name: "צורן והסביבה",
+    request_date: ISODate("2023-06-18T00:00:00Z"),
+    status: 'pending'
+   }
+]);
+
+
+
+
+
+db.Groups.insertMany([
+  {
+    _id: group1Id,
+    group_name: "כללי",
+    type: "GENERAL",
+    active: "active",
+    deleted: false
+  },
+  {
+    _id: group2Id,
+    group_name: "נתניה",
+    type: "CITIES",
+    locations: [
+      {
+        name: "נתניה כניסה מזרחית 1",
+        coordinates: { latitude: 32.323465, longitude: 34.868765 }
+      },
+      {
+        name: "נתניה כניסה מזרחית 2",
+        coordinates: { latitude: 32.323466, longitude: 34.868766 }
+      }
+    ],
+    active: "active",
+    deleted: false
+  },
+  {
+    _id: group3Id,
+    group_name: "הרצליה",
+    type: "CITIES",
+    locations: [
+      {
+         name: "הרצליה שדרות בן גוריון",
+         coordinates: { latitude: 32.165276, longitude: 34.843065 }
+      },
+      {
+        name: "הרצליה חוף השרון",
+        coordinates: { latitude: 32.165712, longitude: 34.816228 }
+      }
+    ],
+    active: "active",
+    deleted: false
+  },
+  {
+  _id: group4Id,
+  group_name: "תל אביב",
+  type: "CITIES",
+  locations: [
+    {
+      name: "דיזנגוף סנטר",
+      coordinates: { latitude: 32.077545, longitude: 34.774821 }
+    },
+    {
+      name: "צפון נמל תל אביב",
+      coordinates: { latitude: 32.099492, longitude: 34.774729 }
+    }
+  ],
+  active: "active",
+  deleted: false
+  },
+  {
+  _id: group5Id,
+  group_name: "חיפה",
+  type: "CITIES",
+  locations: [
+    {
+      name: "שדרות רוקח",
+      coordinates: { latitude: 32.818399, longitude: 34.988186 }
+    },
+    {
+      name: "כיכר המדינה",
+      coordinates: { latitude: 32.820877, longitude: 34.986197 }
+    }
+  ],
+  active: "active",
+  deleted: false
+  }
+]);
+
+
+
+db.JoinGroupRequests.insertMany([
+  {
+    _id: ObjectId(),
+    user_id: userId1,
+    group_id: group2Id,
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'approved'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId2,
+    group_id: group2Id,
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'pending'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId3,
+    group_id: group4Id,
+    request_date: ISODate("2023-07-17T00:00:00Z"),
+    status: 'pending'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId4,
+    group_id: group2Id,
+    request_date: ISODate("2023-07-21T00:00:00Z"),
+    status: 'pending'
+  }
+]);
+
+
+
+db.Tremps.insertMany([
+  {
+    _id: ObjectId(),
+    creator_id: userId1,
+    group_id: group1Id,
+    tremp_type: "driver",
+    create_date: ISODate("2023-05-17T00:00:00Z"),
+    tremp_time: ISODate("2023-10-01T10:00:00Z"),
+    from_root: {
+      name: "צומת פרדסיה",
+      coordinates: { latitude: 32.334455, longitude: 34.855667 }
+    },
+    to_root: {
+      name: "תחנת רכבת נתניה",
+      coordinates: { latitude: 32.323465, longitude: 34.868765 }
+    },
+    note: "יש להשתתף בהוצאות דלק",
+    seats_amount: 3,
+    users_in_tremp: [
+      {
+        user_id: userId1,
+        is_approved: "approved"
+      },
+      {
+        user_id: userId2,
+        is_approved: "approved"
+      }
+    ],
+    is_full: false,
+    chat_id: chatId1, // reference to a chat document
+    active: "active",
+    deleted: false
+  },
+  {
+    _id: ObjectId(),
+    creator_id: userId1,
+    group_id: group1Id,
+    tremp_type: "driver",
+    create_date: ISODate("2023-05-17T00:00:00Z"),
+    tremp_time: ISODate("2023-10-01T10:00:00Z"),
+    from_root: {
+      name: "צומת פרדסיה",
+      coordinates: { latitude: 32.334455, longitude: 34.855667 }
+    },
+    to_root: {
+      name: "תחנת רכבת נתניה",
+      coordinates: { latitude: 32.323465, longitude: 34.868765 }
+    },
+    note: "יש להשתתף בהוצאות דלק",
+    seats_amount: 3,
+    users_in_tremp: [
+      {
+        user_id: userId1,
+        is_approved: "approved"
+      },
+      {
+        user_id: userId2,
+        is_approved: "pending"
+      }
+    ],
+    is_full: false,
+    chat_id: chatId2, // reference to a chat document
+    active: "active",
+    deleted: false
+  },
+  {
+    _id: ObjectId(),
+    creator_id: userId4,
+    group_id: group1Id,
+    tremp_type: "hitchhiker",
+    create_date: ISODate("2023-06-17T00:00:00Z"),
+    tremp_time: ISODate("2023-06-18T10:00:00Z"),
+    from_root: {
+        name: "הרצליה שדרות בן גוריון",
+        coordinates: { latitude: 32.165276, longitude: 34.843065 }
+    },
+    to_root: {
+      name: "תחנת רכבת נתניה",
+      coordinates: { latitude: 32.323465, longitude: 34.868765 }
+    },
+    note: "מוכן להשתתף בהוצאות דלק",
+    seats_amount: 1,
+    users_in_tremp: [
+    ],
+    is_full: false,
+    chat_id: chatId3, // reference to a chat document
+    active: "active",
+    deleted: false
+  }
+]);
+
+
+
+
+// הוספת צ'אט חדש עם שני הודעות
+db.TrempsChats.insertMany([
+  {
+    _id: chatId1,
+    messages: [
+      {
+        sender_id: userId1,
+        timestamp: ISODate("2023-05-19T08:00:00Z"),
+        content: "היי, אני אתחיל בקצת איחור. האם ניתן לדחות את הפגישה ב-15 דקות?"
+      },
+      {
+        sender_id: userId2,
+        timestamp: ISODate("2023-05-19T08:05:00Z"),
+        content: "בטח, אין בעיה. רואים אותך בקרוב!"
+      }
+    ],
+    deleted: false
+  },
+  {
+    _id: chatId2,
+    messages: [
+      {
+        sender_id: userId1,
+        timestamp: ISODate("2023-05-19T08:00:00Z"),
+        content: "היי, אני אתחיל בקצת איחור. האם ניתן לדחות את הפגישה ב-15 דקות?"
+      },
+      {
+        sender_id: userId2,
+        timestamp: ISODate("2023-05-19T08:05:00Z"),
+        content: "בטח, אין בעיה. רואים אותך בקרוב!"
+      }
+    ],
+    deleted: false
+  }
+]);
+
+
+
+
+// Insert single document
+db.Benefits.insertOne({
+  _id: benefitId1,
+  benefit_image: "\\ServerName\\Photos\\MyPhoto.jpg",
+  benefit_name: "gift card 50שח",
+  price: 100,
+  quantity: 10,
+  collection_location: "נתניה בית המושבה",
+  deleted: false
+});
+
+// Insert multiple documents
+db.Benefits.insertMany([
+  {
+    _id: benefitId2,
+    benefit_image: "\\ServerName\\Photos\\AnotherPhoto.jpg",
+    benefit_name: "gift card 75שח",
+    price: 200,
+    quantity: 20,
+    collection_location: "Another Collection Location",
+    deleted: false
+  },
+  {
+    _id: benefitId3,
+    benefit_image: "\\ServerName\\Photos\\Photo3.jpg",
+    benefit_name: "gift card 100שח",
+    price: 300,
+    quantity: 15,
+    collection_location: "Tel Aviv",
+    deleted: false
+  },
+  {
+    _id: benefitId4,
+    benefit_image: "\\ServerName\\Photos\\Photo4.jpg",
+    benefit_name: "gift card 150שח",
+    price: 500,
+    quantity: 20,
+    collection_location: "Jerusalem",
+    deleted: false
+  },
+  {
+    _id: benefitId5,
+    benefit_image: "\\ServerName\\Photos\\Photo5.jpg",
+    benefit_name: "gift card 200שח",
+    price: 1000,
+    quantity: 25,
+    collection_location: "Haifa",
+    deleted: false
+  }
+]);
+
+
+
+// Store purchased benefits for each user
+db.UserBenefits.insertMany([
+  {
+    user_id: userId1,
+    benefit_id: benefitId1, 
+    purchase_date: ISODate("2023-05-20T00:00:00Z")
+  },
+  {
+    user_id: userId2,
+    benefit_id: benefitId1, 
+    purchase_date: ISODate("2023-05-20T00:00:00Z")
+  },
+  {
+    user_id: userId1,
+    benefit_id: benefitId2, 
+    purchase_date: ISODate("2023-06-20T00:00:00Z")
+  }
+]);
+
+print("Database setup completed successfully!");
+
+
+
+
+
+
+
+
+----------------------------------
+function findGroupIdByName(groupName) {
+  const group = db.Groups.findOne({ group_name: groupName });
+  if (group) {
+    return group._id;
+  } else {
+    return null;
+  }
+}
+function addUser(email, phoneNumber, password, firstName, lastName, gender) {
+  const groupId = findGroupIdByName("כללי");
+
+  try {
+    const result = db.Users.insertOne({
+      user_email: email,
+      phone_number: phoneNumber,
+      password: password,
+      photo_URl: null,
+      first_name: firstName,
+      last_name: lastName,
+      gender: gender,
+      coins: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      last_login_date: null,
+      groups: [groupId],
+      status: "active",
+      deleted: false
+    });
+
+    if (result.insertedId) {
+      return result.insertedId; 
+    } else {
+      return null; 
+    }
+  } catch (error) {
+    return null; 
+  }
+}
+
+
+
+
+
+
+function addUsers() {
+  const usersToAdd = [
+    {
+      email: "yossi@example.com",
+      phone: "054-123-4567",
+      password: "Bb987654",
+      firstName: "יוסי",
+      lastName: "לוי",
+      gender: "M"
+    },
+    {
+      email: "rivka@example.com",
+      phone: "050-555-7890",
+      password: "Cc654321",
+      firstName: "רבקה",
+      lastName: "גולדשטיין",
+      gender: "F"
+    },
+    {
+      email: "david@example.com",
+      phone: "053-222-1111",
+      password: "Dd456789",
+      firstName: "דוד",
+      lastName: "כהן",
+      gender: "M"
+    },
+    {
+      email: "miriam@example.com",
+      phone: "055-777-2222",
+      password: "Ee123789",
+      firstName: "מרים",
+      lastName: "פרידמן",
+      gender: "F"
+    },
+  ];
+
+  usersToAdd.forEach(user => {
+    const userId = addUser(user.email, user.phone, user.password, user.firstName, user.lastName, user.gender);
+     if (userId !== null) {
+        addTrempForUser(userId);
+     }
+  });
+}
+
+
+
+
+
+
+
+
+function getRandomUserFromRange(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomDateInRange(start, end) {
+  const randomTimestamp = start.getTime() + Math.random() * (end.getTime() - start.getTime());
+  return new Date(randomTimestamp);
+}
+
+function addTrempForUser(userId) {
+  const userIds = [userId1, userId2, userId3, userId4];
+  const randomUserIndex = getRandomUserFromRange(0, userIds.length - 1);
+  const randomUserId = userIds[randomUserIndex];
+  const seatsAmount = Math.floor(Math.random() * 5) + 1;
+  const today = new Date();
+  // Get the date one month earlier from today
+  const oneMonthEarlier = new Date(today);
+  oneMonthEarlier.setMonth(oneMonthEarlier.getMonth() - 1);
+
+  // Generate random dates within the range
+  const createDate = getRandomDateInRange(oneMonthEarlier, today);
+  const trempTime = new Date(createDate);
+   trempTime.setDate(trempTime.getDate() + 1);
+  // You can customize the tremp data as needed, for example:
+  db.Tremps.insertOne({
+    _id: ObjectId(),
+    creator_id: userId,
+    group_id: group1Id,
+    tremp_type: "driver",
+    create_date: createDate,
+    tremp_time: trempTime,
+    from_root: {
+        name: "תחנת רכבת נתניה",
+        coordinates: { latitude: 32.323465, longitude: 34.868765 }
+    },
+    to_root: {
+      name: "הרצליה שדרות בן גוריון",
+       coordinates: { latitude: 32.165276, longitude: 34.843065 }
+    },
+    note: "",
+    seats_amount: seatsAmount ,
+    users_in_tremp: [
+      {
+        user_id: randomUserId,
+        is_approved: "approved"
+      }
+    ],
+    is_full: false,
+    chat_id: chatId1, 
+    active: "active",
+    deleted: false
+    
+  });
+}
+
+
+
+
+
+addUsers();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+use TrempBossDB;
+
+// function to get  email suffix
+function getEmail(email) {
+  return email + "@gmail.com";
+}
+
+// get random phon number
+function getRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomPhoneNumber() {
+  return "058-" + getRandomNumber(1000000, 9999999);
+}
+
+// בחירה רנדומלית של מגדר 
+function getRandomElement(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+// יצירת משתמשים בהתאם לאורך המערך של המשתמשים והמיילים 
+function createUser() {
+// Array of Hebrew names
+  let firstNames = ["אליה", "בן", "גיל", "דני", "הילה", "ורד", "זהבה", "חגית", "טל", "יעל"];
+  let lastNames = ["כהן", "לוי", "מזרחי", "פרץ", "ביטון", "מלכה", "אברהם", "אטיאס", "דהן", "סעדון"];
+  let emails = ["Elia", "Ben", "Gil", "Danny", "Hila", "Vered", "Zahava", "Hagit", "Tal", "Yael"];
+  let genders = ["M", "F"];
+  let statuses = ["active", "inactive"];
+  
+  for (let i = 0; i < 10; i++) {
+    let user = {
+      user_email: getEmail(emails[i]),
+      phone_number: getRandomPhoneNumber(),
+      password: "password", // This is a placeholder, always hash and salt passwords in real applications
+      photo_URl: "\\ServerName\\Photos\\MyPhoto.jpg",
+      first_name: firstNames[i],
+      last_name: lastNames[i],
+      gender: getRandomElement(genders),
+      coins: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      last_login_date: null,
+	  groups:[],
+      status: getRandomElement(statuses),
+      deleted:false
+    };
+    db.Users.insert(user);
+  }
+}
+
+createUser();
+
+// פונקציה שמוסיפה לכל היוזרים את המזהה של קבוצת ברירת המחדל 
+function addGroup1ToAllUsers() {
+    db.Users.updateMany(
+        {}, 
+        { $addToSet: { groups: group1Id } }
+    );
+}
+
+addGroup1ToAllUsers();
+
+
+// שבחרנו המחיקה מתבצעת על האיברים מהסוף Doc  פונקציה למחיקה של מספר 
+function deleteLastNDocs(collectionName, n) {
+  // Fetch last 'n' documents
+  var lastNDocs = db[collectionName].find().sort({_id: -1}).limit(n).toArray();
+
+  // Extract their _ids
+  var idsToDelete = lastNDocs.map(function(doc) { return doc._id; });
+
+  // Delete documents with the fetched _ids
+  db[collectionName].deleteMany({_id: {$in: idsToDelete}});
+}
+
+deleteLastNDocs("Users", 10);
+
+
+//#####################  ADD USER TO Users Collection ##################### 
+
+//get groupid by name 
+function findGroupIdByName(groupName) {
+  const group = db.Groups.findOne({ group_name: groupName });
+  if (group) {
+    return group._id;
+  } else {
+    return null;
+  }
+}
+
+const groupId = findGroupIdByName("כללי");
+print(groupId);
+// get userId by email
+function findUserIdByEmail(email) {
+  // Find the user document by email
+  let user = db.Users.findOne({user_email: email});
+
+  if (user) {
+    return user._id;
+  } else {
+    return null;
+  }
+}
+
+const userId = findUserIdByEmail("ely@gmail.com");
+print(userId);
+
+//add user to Users Collection 
+//By default the user will be in a general group
+
+function addUser(email, phoneNumber, password, firstName, lastName, gender) {
+  const groupId = findGroupIdByName("כללי");
+  
+  try {
+    db.Users.insertOne({
+      user_email: email,
+      phone_number: phoneNumber,
+      password: password,
+      photo_URl: null,
+      first_name: firstName,
+      last_name: lastName,
+      gender: gender,
+      coins: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      last_login_date: null,
+      groups: [groupId],
+      status: "active",
+      deleted: false
+    });
+    
+    return "User added successfully.";
+  } catch (error) {
+    return "Error occurred while adding the user.";
+  }
+}
+
+addUser(
+  "mor@gmail.com",
+  "052-777-1234",
+  "Aa123456",
+  "מור",
+  "קניזו",
+  "F"
+);
+
+
+addUser(
+  "ela@gmail.com",
+  "052-888-1234",
+  "Aa123456",
+  "אלה",
+  "קניזו",
+  "F"
+);
+
+//הוספת קבוצה למשתמשים 
+function addUserToGroup(email, groupId) {
+  db.Users.updateOne(
+    { user_email: email },
+    { $push: { groups: groupId } }
+  );
+ }
+addUserToGroup("ben@example.com",findGroupIdByName("נתניה"))
+
+
+function removeUserFromGroup(userId, groupId) {
+  db.Users.updateOne(
+    { _id: userId },
+    { $pull: { groups: groupId } }
+  );
+ }
+removeUserFromGroup(findUserIdByEmail("ben@example.com"),findGroupIdByName("נתניה"))
+ 
+//#####################  Delete user (updating the deleted field to true) ##################### 
+
+// הפונקציה מחפשת את המשתמש אם הוא קיים בודקת אם הוא כבר נמחק אם כן נותנת הודעה בהתאם
+// אחרת היא מוחקת את המשתמש ע" עדכון לאמת 
+// אם המשתמש לא קיים היא מודיע שהוא לא קיים 
+//use $set 
+function deleteUserByEmailOrPhone(identifier) {
+  const user = db.Users.findOne(
+    { $or: [ { user_email: identifier }, { phone_number: identifier } ] } 
+  );
+
+  if (user) {
+    if (user.deleted) {
+      return "User already deleted.";
+    } else {
+      db.Users.updateOne(
+        { $or: [ { user_email: identifier }, { phone_number: identifier } ] },
+        { $set: { deleted: true } }
+      );
+      return `User "${user.first_name} ${user.last_name}" deleted successfully.`;
+    }
+  } else {
+    return "User not found.";
+  }
+}
+
+
+deleteUserByEmailOrPhone("ela@gmail.com"); // Delete by email
+deleteUserByEmailOrPhone("056-777-1234"); // Delete by phone 
+
+
+//#####################  print all collections ##################### 
+
+function viewAllCollections() {
+  // Get an array of collection names in the current database
+  let collections = db.getCollectionNames();
+
+  // Iterate over each collection
+  for (let i = 0; i < collections.length; i++) {
+    // Print the current collection name
+    print("############################# Collection: " + collections[i] + " #############################");
+    // Retrieve all documents from the current collection using `find()`
+    // and iterate over each document
+    db[collections[i]].find().forEach(printjson);
+  }
+}
+
+viewAllCollections();
+
+//option 2
+function viewAllCollections_2() {
+  // Get an array of collection names in the current database
+  let collections = db.getCollectionNames();
+
+  // Iterate over each collection
+  for (let i = 0; i < collections.length; i++) {
+    // Print the current collection name
+    print("############################# Collection: " + collections[i] + " #############################");
+    // Retrieve all documents from the current collection using `find()`
+    // and iterate over each document
+    let cursor = db[collections[i]].find();
+	while (cursor.hasNext()) {
+		printjson(cursor.next());
+	}
+  }
+}
+viewAllCollections_2();
+
+//#####################  print Documents by collection name ##################### 
+function printCollectionDoc(collectionName) {
+  let collection = db.getCollection(collectionName);
+  if (!collection) {
+    print('Collection not found.');
+    return;
+  }
+
+  let documents = collection.find().toArray();
+  documents.forEach(printjson);
+}
+
+printCollectionDoc("AdminUsers")
+printCollectionDoc("Users")
+printCollectionDoc("GroupRequests")
+printCollectionDoc("Groups")
+printCollectionDoc("JoinGroupRequests")
+printCollectionDoc("Tremps")
+printCollectionDoc("Chats")
+printCollectionDoc("Benefits")
+printCollectionDoc("UserBenefits")
+
+// returns all the names and emails of the users
+//If no username is entered we will return an anonymous John Doe
+//use Projection 
+function getAllUserNamesEmailsAndPhons() {
+  const users = db.Users.find({}, { first_name: 1, last_name: 1, user_email: 1, phone_number: 1 });
+  return users.map(user => {
+    const name = user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : "John Doe";
+    return { name, email: user.user_email, phone: user.phone_number || null };
+  });
+}
+
+getAllUserNamesEmailsAndPhons();
+
+// Functions to fetch user groups
+
+//Displaying the user's groups only via his email
+function getUserGroupByEmail(email) {
+  const user = db.Users.findOne({ user_email: email });
+  if (user) {
+    const groupIds = user.groups;
+    const groups = db.Groups.find({ _id: { $in: groupIds } }, { group_name: 1 });
+    return groups.map(group => group.group_name);
+  } else {
+    return null;
+  }
+}
+
+getUserGroupByEmail("ely@gmail.com");
+
+//Displaying the user's groups via his email or cell phone
+function displayUserGroups(identifier) {
+  const user = db.Users.findOne({
+    $or: [{ user_email: identifier }, { phone_number: identifier }]
+  });
+
+  if (user) {
+    const groupIds = user.groups;
+    const groups = db.Groups.find({ _id: { $in: groupIds } }).sort({ group_name: 1 });
+
+    print(`User: ${user.first_name} ${user.last_name}`);
+    print("Groups:");
+    groups.forEach(group => print(`- ${group.group_name}`));
+  } else {
+    print("User not found.");
+  }
+}
+
+displayUserGroups("ely@gmail.com");
+displayUserGroups("058-555-1234");
+
+//count documents in collection
+function countDocuments(collectionName) {
+    let count = db.getCollection(collectionName).count();
+    print(count);
+}
+
+countDocuments('Users');
+countDocuments('Tremps');
+
+//project certain fields
+// query וה Projectionניתן דינמית להגדיר בשליחה לפונקציה את ה
+function findWithProjection(collectionName, query, fields) {
+    let cursor = db.getCollection(collectionName).find(query, fields);
+    let results = [];
+    while (cursor.hasNext()) {
+        let document = cursor.next();
+        let result = {};
+        for (let key in document) {
+            if (fields[key] !== 0) {
+                result[key] = document[key];
+            }
+        }
+        results.push(result);
+    }
+    printjson(results);
+}
+
+//(collection, query,projection)
+// כאן אני אומר לי שיחפש את אלי וחיזיר לי את השם הפרטי והשם המשפחה שלו ללא המזהה
+findWithProjection('Users', { first_name: "אלי" }, { _id: 0, first_name: 1, last_name: 1});
+findWithProjection('Groups', { type:"CITIES",active:"active" }, { _id: 0, group_name: 1});
+
+//limit documents
+// בוחר אוסף ומגדיר כמה אתה רוצה לקבל 
+function findWithLimit(collectionName, limit) {
+    let cursor = db.getCollection(collectionName).find().limit(limit);
+    while (cursor.hasNext()) {
+        printjson(cursor.next());
+    }
+}
+
+findWithLimit('Users', 2);
+
+//skip documents
+// בוחר אוסף ומגדיר כמה לדלג מהתחלת האוסף
+
+function findWithSkip(collectionName, skip) {
+    let cursor = db.getCollection(collectionName).find().skip(skip);
+    while (cursor.hasNext()) {
+        printjson(cursor.next());
+    }
+}
+
+findWithSkip('Users', 2);
+
+// פונקציה דינמית לחיפוש  שקוראים לפונקציה בוחרים בסינון המתאים בהתאם לסדר הפרמטרים של 
+// וקוראים לפונקציה הפונקציה תדפיס את הנתונים המסוננים 
+function advancedFind(collectionName, query = {}, projection = {}, limit = 0, skip = 0, sort = {}, count = false) {
+    let cursor = db.getCollection(collectionName).find(query, projection);
+
+    if (skip) {
+        cursor = cursor.skip(skip);
+    }
+
+    if (limit) {
+        cursor = cursor.limit(limit);
+    }
+
+    if (Object.keys(sort).length) {
+        cursor = cursor.sort(sort);
+    }
+
+    if (count) {
+        return cursor.count();
+    }
+
+    let results = cursor.toArray();
+    
+    results.forEach(result => {
+        printjson(result);
+    });
+}
+
+
+// מציאת משתמשים שהם לא המשתמש הראשון באוסף ויש להם שם פרטי ומסודרים על פי שם פרטי 
+advancedFind('Users', {first_name: {$exists: true}}, { _id: 0, first_name: 1 }, 1, 1, { first_name: 1 });
+//  מציאת 5 המיקומים האחרונים שאנשים ביקשו טרמפים 
+advancedFind('Tremps', {}, {from_root: 1, to_root: 1, create_date: 1}, 5, 0, {create_date: -1});
+// מציאת 5 המיקומים האחרונים של מאיפה משתמשים ביקשו טרמפ
+advancedFind('Tremps', {}, {from_root: 1, create_date: 1}, 5, 0, {create_date: -1});
+
+
+//####################### שכפול אוסף ####################### 
+// queryפונקציה שמשכפלת אוסף בהתאם לשם האוסף ששלחנו ובהתאם ל 
+function duplicateCollection(srcCollection, destCollection, query) {
+    // Get a reference to the source collection
+    let source = db.getCollection(srcCollection);
+  
+    // If the destination collection exists, drop it
+    if (db.getCollectionNames().indexOf(destCollection) > -1) {
+      db.getCollection(destCollection).drop();
+    }
+  
+    // Get a reference to the destination collection
+    let destination = db.getCollection(destCollection);
+  
+    // Find documents in the source collection and insert them into the destination collection
+    source.find(query).forEach(function(doc) {
+      destination.insert(doc);
+    });
+
+    print(destCollection + " has been created successfully!");
+}
+
+// העתקת כל המשתמשים הפעילים לאוסף חדש
+//(srcCollection, destCollection, query)
+duplicateCollection('Users', 'Active_Users', { status: 'active'});
+// העתקת כל המשתמשים הלא פעילים לאוסף חדש
+duplicateCollection('Users', 'Inactive_Users', { status: 'inactive'});
+
+//  שלא בשימוש בהתאם למה שאנו רוצים למחוק DOC פונקציה למחיקה
+function deleteFromCollection(collectionName, query = {}) {
+    let collection = db.getCollection(collectionName);
+    collection.deleteMany(query);
+}
+
+
+// פונקציה לגיבוי ואז מחיקה של איזה אוסף שאנחנו רוצים בהתאם לקרטיונים המתאימים
+function DeleteAndBackUpInactiveDataFromCollection(srcCollection, destCollection, query, update) {
+    // Update status of users
+    db[srcCollection].updateMany(query, update);
+  
+    // Duplicate collection with only those docs matching the query
+    duplicateCollection(srcCollection, destCollection, query);
+  
+    // Delete from the source collection
+    deleteFromCollection(srcCollection, query);
+}
+
+// עדכון השדה של המחיקה לאמת וגיבוי האוסף ואז מחיקת המשתמשים שהמחיקה אצלם באמת 
+DeleteAndBackUpInactiveDataFromCollection(
+    'Users', 
+    'DeletedUsers', 
+    { status: 'inactive', deleted: false }, 
+    { $set: { deleted: true }}
+);
+
+// עדכון שדה ספציפי אצל משתמש
+db.Users.updateMany(
+    { status: 'inactive', deleted: true },
+    { $set: { deleted: false }}
+);
+
+
+// מהאוסף  doc מחיקת כל ה 
+deleteFromCollection("Inactive_Users", {});
+
+// פונקציה שמוחקת אוסף ריק 
+// אם אין אוסף היא תתדפיס שלא ניתן למחוק
+function deleteEmptyCollection(collectionName) {
+    let collection = db.getCollection(collectionName);
+
+    // Check if the collection is empty
+    if (collection.count() === 0) {
+        // Delete the collection
+        db[collectionName].drop();
+        print(collectionName + " has been deleted successfully!");
+    } else {
+        // Print an error message
+        print("The collection " + collectionName + " contains data and cannot be deleted.");
+    }
+}
+
+//תמחק כי רוקנו את האוסף
+deleteEmptyCollection('Inactive_Users');
+//לא תמחק יש נתונים באוסף זה 
+deleteEmptyCollection('Active_Users');
+
+// פונקציה שמוחקת אוסף אפילו שיש בו ערכים אבל היא יוצרת לו גיבוי
+function forceDeleteWithBackup(srcCollection) {
+    // Duplicate the source collection to the backup collection
+    duplicateCollection(srcCollection, "Bin_" + srcCollection , {});
+
+    // Get a reference to the source collection
+    let collection = db.getCollection(srcCollection);
+
+    // Force delete the collection
+    db[srcCollection].drop();
+    print(srcCollection + " has been deleted successfully!");
+}
+
+forceDeleteWithBackup('Active_Users');
+
+//מחיקה ללא גיבוי
+function forceDelete(srcCollection) {
+ 
+    // Force delete the collection
+    db[srcCollection].drop();
+    print(srcCollection + " has been deleted successfully!");
+}
+
+forceDelete('Bin_Active_Users');
+
+// פונקציה להוספת מטבעות למשתמש בהתאם לכמות שבחרנו 
+function incrementUserCoins(email, incrementValue) {
+  db.Users.updateOne({user_email: email}, {$inc: {coins: incrementValue}});
+}
+
+// הוספת עשר מטבעות למשתמש אלי 
+incrementUserCoins("ely@gmail.com", 10);
+
+// פונקציה להוספת מטבעות לכל המשתמשים שפעילים
+function addCoinsToActiveUsers(coinsToAdd) {
+    db.Users.updateMany(
+        { status: "active",deleted:false},
+        { $inc: { coins: coinsToAdd }}
+    );
+}
+
+addCoinsToActiveUsers(50);
+
+// Rename 'photo_URl' to 'photo_URL' in Users collection
+db.Users.updateOne(
+  {},
+  { $rename: { "photo_URl": "photo_URL" } }
+);
+
+// Pop last message from chat with chatId2
+db.TrempsChats.update(
+  { _id: chatId2 },
+  { $pop: { messages: 1 } }
+);
+
+// Rename 'benefit_image' to 'image_URL' in Benefits collection
+db.Benefits.updateMany(
+  {},
+  { $rename: { "benefit_image": "image_URL" } }
+);
+
+//##############################  חלק ב: סעיפים 6-7 ############################## 
+
+//Find the average number of groups each user is part of:
+db.Users.aggregate([
+  {
+    $project: {
+      user_email: 1,
+      num_of_groups: { $size: "$groups" }
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      avgNumOfGroups: { $avg: "$num_of_groups" }
+    }
+  }
+]);
+
+//Count the number of users per group:
+db.Users.aggregate([
+  { $unwind: "$groups" },
+  { 
+    $group: {
+      _id: "$groups",
+      count: { $sum: 1 }
+    } 
+  },
+  {
+    $lookup: {
+      from: "Groups",
+      localField: "_id",
+      foreignField: "_id",
+      as: "group_info"
+    }
+  },
+  {
+    $unwind: "$group_info"
+  },
+  {
+    $project: {
+      _id: 0, // hide _id field
+      group_id: "$_id",
+      user_count: "$count",
+      group_name: "$group_info.group_name",
+      description: "$group_info.description",
+    }
+  }
+]);
+
+
+//Find the total number of messages in each chat:
+db.TrempsChats.aggregate([
+  {
+    $project: {
+      _id: 0, // hide _id field
+      chat_id: 1,
+      num_of_messages: { $size: "$messages" },
+      // add more fields if they exist in your documents
+      // e.g., created_at: 1, updated_at: 1
+    }
+  }
+]);
+
+
+//Count the number of benefits each user has bought:
+db.UserBenefits.aggregate([
+  { 
+    $group: {
+      _id: "$user_id",
+      count: { $sum: 1 }
+    } 
+  },
+  {
+    $lookup: {
+      from: "Users",
+      localField: "_id",
+      foreignField: "_id",
+      as: "user_info"
+    }
+  },
+  {
+    $unwind: "$user_info"
+  },
+  {
+    $project: {
+      _id: 0, // hide _id field
+      user_id: "$_id",
+      benefits_count: "$count",
+      user_email: "$user_info.user_email",
+      first_name: "$user_info.first_name",
+      last_name: "$user_info.last_name",
+    }
+  }
+]);
+
+
+//fetch all 'active' Tremps
+db.Tremps.aggregate([
+  {
+    $match: {
+      active: 'active'
+    }
+  }
+]).pretty();
+
+
+//fetch all Tremps sorted by their create_date in descending order:
+db.Tremps.aggregate([
+  {
+    $sort: {
+      create_date: -1
+    }
+  }
+]).pretty();
+
+// accepts the field name and the value to check for as parameters, 
+// and then constructs and executes the aggregation query dynamically.
+function getActiveDocuments(collectionName, query ) {
+
+    let cursor = db[collectionName].aggregate([
+        {
+            $match: query
+        }
+    ]);
+
+    while(cursor.hasNext()) {
+        printjson(cursor.next());
+    }
+}
+
+//הצגת כל הרטמפים שפעילים 
+getActiveDocuments('Tremps', {active:'active'});
+
+
+//A dynamic function that receives a collection and a pipeline and performs aggregation
+function aggregate(collectionName, pipeline) {
+    if (typeof db === 'undefined') {
+        throw new Error('Database object is not defined.');
+    }
+
+    if (!(collectionName in db)) {
+        throw new Error(`Collection "${collectionName}" does not exist.`);
+    }
+
+    let cursor = db[collectionName].aggregate(pipeline);
+
+    return cursor.toArray();
+}
+
+// The function `getMostPopularRoutes` retrieves the top 5 most popular routes based on the number of
+//  occurrences in a MongoDB collection.
+//  returns the most popular routes, which are determined by grouping the documents by the
+// "from_root" and "to_root" fields, counting the number of occurrences for each route, sorting the
+//  routes in descending order based on the count, and returning the top 5 routes.
+
+function getMostPopularRoutes() {
+    const pipeline = [
+        {
+            $group: {
+                _id: { from_root: "$from_root.name", to_root: "$to_root.name" },
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: { count: -1 }
+        },
+        {
+            $limit: 5
+        }
+    ];
+
+    try {
+        const popularRoutes = aggregate('Tremps', pipeline);
+        printjson(popularRoutes);
+    } catch (error) {
+        throw error;
+    }
+}
+
+ getMostPopularRoutes();
+
+
+
+
+function getPeopleAndTrempCounts() {
+    // Pipeline for MongoDB aggregation is defined here.
+    const pipeline = [
+        // Documents marked as 'deleted' are filtered out in the 'match' stage.
+        {
+            $match: { deleted: false }
+        },
+        // New fields are added to each document in the 'addFields' stage.
+        // 'approved_users_count' is the count of approved users in the trip.
+        // 'is_approved_trip' indicates if the trip is approved or not.
+        {
+            $addFields: {
+                approved_users_count: {
+                    $size: {
+                        $filter: {
+                            input: "$users_in_tremp",
+                            as: "user",
+                            cond: { $eq: ["$$user.is_approved", "approved"] }
+                        }
+                    }
+                },
+                is_approved_trip: { $in: ["approved", "$users_in_tremp.is_approved"] }
+            }
+        },
+        // The 'project' stage controls the fields that are included in the output.
+        // 'total_people' represents the total number of people (the count of approved users plus one).
+        // It also keeps the 'is_approved_trip' field.
+        {
+            $project: {
+                total_people: {
+                    $cond: {
+                        if: { $gt: ["$approved_users_count", 0] },
+                        then: { $add: [1, "$approved_users_count"] },
+                        else: "$approved_users_count"
+                    }
+                },
+                is_approved_trip: 1
+            }
+        },
+        // The 'group' stage groups the documents. In this case, all documents are grouped together (_id: 1).
+        // It sums up the 'total_people' and 'total_approved_trips'.
+        {
+            $group: {
+                _id: 1,
+                total_people: { $sum: "$total_people" },
+                total_approved_trips: { $sum: { $cond: { if: "$is_approved_trip", then: 1, else: 0 } } }
+            }
+        },
+        // Another 'project' stage is used to modify the structure of the result.
+        // It calculates 'average_people_per_trip' which is the ratio of total people to the total approved trips.
+        {
+            $project: {
+                total_people: 1,
+                total_approved_trips: 1,
+                average_people_per_trip: {
+                    $cond: {
+                        if: { $eq: ["$total_approved_trips", 0] },
+                        then: 0,
+                        else: { $divide: ["$total_people", "$total_approved_trips"] }
+                    }
+                }
+            }
+        }
+    ];
+
+    try {
+        const result = aggregate('Tremps', pipeline);
+        printjson(result);
+    } catch (error) {
+        throw error;
+    }
+}
+
+getPeopleAndTrempCounts();
+
+
+function getTopDrivers() {
+    const pipeline = [
+        {
+            $match: {
+                'users_in_tremp.is_approved': 'approved',
+                'deleted': false,
+                'tremp_type': 'driver'
+            }
+        },
+        {
+            $lookup: {
+                from: 'Users',  // Assuming the collection name to be Users
+                localField: 'creator_id',
+                foreignField: '_id',
+                as: 'driver_data'
+            }
+        },
+        {
+            $unwind: '$driver_data'
+        },
+        {
+            $group: {
+                _id: "$creator_id",
+                driverName: { $first: { $concat: ['$driver_data.first_name', ' ', '$driver_data.last_name'] } },
+                driverEmail: { $first: "$driver_data.user_email" },
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: { count: -1 }
+        },
+        {
+            $limit: 5
+        },
+    ];
+
+    try {
+        const drivers = db.Tremps.aggregate(pipeline).toArray();  
+        printjson(drivers);
+    } catch (error) {
+        printjson({ message: error.message });
+    }
+}
+
+getTopDrivers();
+
+
+
+function getMostRequestedHours() {
+    const pipeline = [
+        {
+            $match: {
+                'deleted': false,
+            }
+        },
+        {
+            $addFields: {
+                convertedTrempTime: {
+                    $toDate: "$tremp_time"
+                }
+            }
+        },
+        {
+            $project: {
+                hour: { $hour: "$convertedTrempTime" }
+            }
+        },
+        {
+            $group: {
+                _id: "$hour",
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: { count: -1 }
+        },
+        {
+            $limit: 5
+        },
+    ];
+
+    try {
+        let hours = db.Tremps.aggregate(pipeline).toArray();  
+
+        hours = hours.map(hour => ({
+            ...hour,
+            _id: hour._id + ':00',
+        }));
+
+        printjson(hours);
+    } catch (error) {
+        printjson({ message: error.message });
+    }
+}
+
+getMostRequestedHours();
+
+
+function getRideAndTripCounts() {
+    const pipeline = [
+        {
+            $match: {
+                deleted: false
+            }
+        },
+        {
+            $addFields: {
+                openRides: { $cond: [{ $eq: ["$tremp_type", "driver"] }, 1, 0] },
+                joinedRides: {
+                    $cond: [
+                        {
+                            $and: [
+                                { $eq: ["$tremp_type", "driver"] },
+                                { $ne: [{ $size: "$users_in_tremp" }, 0] }
+                            ]
+                        },
+                        { $size: "$users_in_tremp" },
+                        0
+                    ]
+                },
+                openTrips: { $cond: [{ $eq: ["$tremp_type", "hitchhiker"] }, 1, 0] },
+                joinedTrips: {
+                    $cond: [
+                        {
+                            $and: [
+                                { $eq: ["$tremp_type", "hitchhiker"] },
+                                { $ne: [{ $size: "$users_in_tremp" }, 0] }
+                            ]
+                        },
+                        { $size: "$users_in_tremp" },
+                        0
+                    ]
+                },
+            }
+        },
+        {
+            $group: {
+                _id: 1,
+                totalOpenRides: { $sum: "$openRides" },
+                totalJoinedRides: { $sum: "$joinedRides" },
+                totalOpenTrips: { $sum: "$openTrips" },
+                totalJoinedTrips: { $sum: "$joinedTrips" },
+            }
+        },
+    ];
+
+    try {
+        const result = db.Tremps.aggregate(pipeline).toArray();  
+        printjson(result);
+    } catch (error) {
+        printjson({ message: error.message });
+    }
+}
+
+getRideAndTripCounts();
+
+
+function getBenefitPurchaseCounts() {
+    // Aggregation Pipeline
+    const pipeline = [
+      {
+        $match: { 
+          user_id: { $exists: true }, 
+          benefit_id: { $exists: true } 
+        }
+      },
+      {
+        $group: { 
+          _id: "$user_id", 
+          count: { $sum: 1 } 
+        }
+      },
+      {
+        $lookup: {
+          from: "Users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user_info"
+        }
+      },
+      {
+        $unwind: "$user_info"
+      },
+      {
+        $project: {
+          first_name: "$user_info.first_name",
+          last_name: "$user_info.last_name",
+          count: 1
+        }
+      },
+      {
+        $out: "UserBenefitPurchaseCounts"
+      }
+    ];
+
+    try {
+        db.UserBenefits.aggregate(pipeline);
+    } catch (error) {
+        printjson({ message: error.message });
+    }
+}
+
+getBenefitPurchaseCounts();
+
+// Query the results
+db.UserBenefitPurchaseCounts.find().forEach(function (result) {
+  print(
+    "User " +
+      result.first_name +
+      " " +
+      result.last_name +
+      " (ID: " +
+      result._id +
+      ") purchased " +
+      result.count +
+      " benefits."
+  );
+});
+
+
+//#################################  map reduce function  #################################  
+
+
+//getRideAndTripCounts
+var mapFunction = function() {
+    var openRides = (this.tremp_type == "driver") ? 1 : 0;
+    var joinedRides = (this.tremp_type == "driver" && this.users_in_tremp.length > 0) ? this.users_in_tremp.length : 0;
+    var openTrips = (this.tremp_type == "hitchhiker") ? 1 : 0;
+    var joinedTrips = (this.tremp_type == "hitchhiker" && this.users_in_tremp.length > 0) ? this.users_in_tremp.length : 0;
+   
+    emit(1, { 
+        totalOpenRides: openRides, 
+        totalJoinedRides: joinedRides, 
+        totalOpenTrips: openTrips, 
+        totalJoinedTrips: joinedTrips 
+    });
+};
+
+var reduceFunction = function(key, values) {
+    var reducedObject = {
+        totalOpenRides: 0, 
+        totalJoinedRides: 0, 
+        totalOpenTrips: 0, 
+        totalJoinedTrips: 0 
+    };
+    
+    values.forEach(function(value) {
+        reducedObject.totalOpenRides += value.totalOpenRides;
+        reducedObject.totalJoinedRides += value.totalJoinedRides;
+        reducedObject.totalOpenTrips += value.totalOpenTrips;
+        reducedObject.totalJoinedTrips += value.totalJoinedTrips;
+    });
+    
+    return reducedObject;
+};
+
+try {
+    var result2 = db.Tremps.mapReduce(
+        mapFunction,
+        reduceFunction,
+        { out : { inline : 1 } }
+    );
+    printjson(result2);
+} catch (error) {
+    printjson({ message: error.message });
+}
+
+
+
+
+
+// Map function
+var mapFunction = function() {
+    emit(this.creator_id, 1); // emit user_id with a count of 1 for each Tremp
+};
+
+// Reduce function
+var reduceFunction = function(userId, values) {
+    return Array.sum(values); // sum up the counts for each user
+};
+
+// Execute MapReduce function
+db.Tremps.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "TotalTrempsPerUser" }
+);
+
+db.TotalTrempsPerUser.find().sort({_id: 1})
+
+
+
+//Finding the average number of coins per user
+
+// Mapping Function - Assigns each user's coins to their ID
+var assignCoinsToUser = function() {
+   emit(this._id, this.coins);
+};
+
+// Reducing Function - Calculates the average coins per user
+var calculateAverageCoins = function(userId, coins) {
+   var sum = Array.sum(coins);
+   var avg = sum/coins.length;
+   return avg;
+};
+
+// Execute MapReduce function
+db.Users.mapReduce(
+   assignCoinsToUser,
+   calculateAverageCoins,
+   { out: "AverageCoinsPerUser" }
+)
+db.AverageCoinsPerUser.find().sort({_id: 1})
+
+
+
+
+
+
+
+//Count the number of Tremps per group
+// Mapping Function - Assigns a count of 1 for each Tremp to the group ID
+var assignCountToGroup = function() {
+   emit(this.group_id, 1);
+};
+
+// Reducing Function - Summarizes the counts for each group
+var sumCountsPerGroup = function(groupId, counts) {
+   return Array.sum(counts);
+};
+
+// Execute MapReduce function
+db.Tremps.mapReduce(
+   assignCountToGroup,
+   sumCountsPerGroup,
+   { out: "TrempsPerGroupCount" }
+)
+
+db.TrempsPerGroupCount.find().sort({_id: 1})
+
+
+
+
+
+//Finding the most common benefit purchased
+// Map function - Assigns a count of 1 for each benefit purchase to the benefit ID
+var countBenefitPurchases = function() {
+   emit(this.benefit_id, 1);
+};
+
+// Reduce function - Summarizes the counts for each benefit
+var sumBenefitPurchases = function(benefitId, counts) {
+   return Array.sum(counts);
+};
+
+// Execute MapReduce function
+db.UserBenefits.mapReduce(
+   countBenefitPurchases,
+   sumBenefitPurchases,
+   { out: "BenefitPurchaseCounts" }
+)
+
+db.BenefitPurchaseCounts.find().sort({_id: 1})
+
+
+
+
+
+//Counting the number of active and inactive users
+
+// Map function - Emits a count of 1 for each user's status
+var emitUserStatusCount = function() {
+   emit(this.status, 1);
+};
+
+// Reduce function - Sums the counts for each user status
+var sumUserStatusCounts = function(status, counts) {
+   return Array.sum(counts);
+};
+
+// Execute MapReduce function
+db.Users.mapReduce(
+   emitUserStatusCount,
+   sumUserStatusCounts,
+   { out: "UserStatusCounts" }
+)
+
+db.UserStatusCounts.find().sort({_id: 1})
+
+
+
+
+//the same as getBenefitPurchaseCounts()
+//count the number of benefits purchased by each user and store the results in a new collection called "benefits_purchased_by_user"
+// Map function - Emits a count of 1 for each user's benefit purchase, if both user_id and benefit_id exist
+var emitBenefitPurchaseCount = function () {
+  if (this.user_id && this.benefit_id) {
+    emit(this.user_id, 1);
+  }
+};
+
+// Reduce function - Sums the counts for each user's benefit purchases
+var sumBenefitPurchaseCounts = function (userId, counts) {
+  return Array.sum(counts);
+};
+
+// Run MapReduce on the UserBenefits collection
+db.UserBenefits.mapReduce(
+  emitBenefitPurchaseCount,
+  sumBenefitPurchaseCounts,
+  { out: "UserBenefitPurchaseCountsWithMapReduce" }
+);
+
+// Query the results
+db.UserBenefitPurchaseCountsWithMapReduce.find().forEach(function (result) {
+  var user = db.Users.findOne({ _id: result._id });
+  print(
+    "User " +
+      user.first_name +
+      " " +
+      user.last_name +
+      " (ID: " +
+      result._id +
+      ") purchased " +
+      result.value +
+      " benefits."
+  );
+});
+
+
+
+
+
+

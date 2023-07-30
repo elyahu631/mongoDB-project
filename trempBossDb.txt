@@ -1,0 +1,672 @@
+//############################################################
+//################           מגישים           ################ 
+//################ עמית מיירנץ ואליהו ענבי           ################ 
+//############################################################
+
+use TrempBossDB;
+
+db.dropDatabase();
+
+use TrempBossDB;
+
+
+
+// Collections
+db.createCollection("AdminUsers");
+db.AdminUsers.createIndex({ "username": 1 }, { unique: true }); // ensure unique usernames
+db.AdminUsers.createIndex({ "email": 1 }, { unique: true }); // ensure unique email
+db.AdminUsers.createIndex({ "phone_number": 1 }, { unique: true }); // Fixed: Added closing parenthesis
+db.createCollection("Users");
+db.Users.createIndex({ "user_email": 1 }, { unique: true }); // ensure unique user_email
+db.createCollection("GroupRequests");
+db.createCollection("Groups");
+db.Groups.createIndex({ "group_name": 1 }, { unique: true }); // ensure unique Groups
+db.createCollection("JoinGroupRequests");
+db.createCollection("Tremps");
+db.createCollection("TrempsChats");
+db.createCollection("Benefits");
+db.Benefits.createIndex({ "benefit_name": 1 }, { unique: true });
+db.createCollection("UserBenefits");
+
+
+db.AdminUsers.insertOne({
+  username: "admin1",
+  email: "admin123@tremp.com",
+  phone_number: "05896321475", // Fixed: Added closing double quote
+  first_name: "מנהל",
+  last_name: "מערכת",
+  password: "admin123", // remember to hash this password
+  role: "admin",
+  account_activated: true,
+  createdAt: ISODate("2023-05-17T00:00:00Z"),
+  updatedAt: ISODate("2023-05-17T00:00:00Z"),
+  last_login_date: null,
+  deleted: false
+});
+
+db.AdminUsers.insert({
+  username: "helpdesk1",
+  email: "helpdesk123@tremp.com",
+  phone_number: "05896323475", // Fixed: Added closing double quote
+  first_name: "מנהל",
+  last_name: "מערכת",
+  password: "helpdesk123", // remember to hash this password
+  role: "helpdesk",
+  account_activated: true,
+  createdAt: ISODate("2023-05-17T00:00:00Z"),
+  updatedAt: ISODate("2023-05-17T00:00:00Z"),
+  last_login_date: null,
+  deleted: false
+});
+
+
+
+var group1Id = ObjectId();
+var group2Id = ObjectId();
+var group3Id = ObjectId();
+var group4Id = ObjectId();
+var group5Id = ObjectId();
+var userId1 = ObjectId();
+var userId2 = ObjectId();
+var userId3 = ObjectId();
+var userId4 = ObjectId();
+var chatId1 = ObjectId();
+var chatId2 = ObjectId();
+var chatId3 = ObjectId();
+var benefitId1 = ObjectId();
+var benefitId2 = ObjectId();
+var benefitId3 = ObjectId();
+var benefitId4 = ObjectId();
+var benefitId5 = ObjectId();
+
+
+
+db.Users.insertMany([
+  {
+    _id: userId1,
+    user_email: "ely@gmail.com",
+    phone_number: "058-555-1234",
+    password: "ely123", // remember to hash this password
+    photo_URl: "\\ServerName\\Photos\\MyPhoto.jpg",
+    first_name: "אלי",
+    last_name: "ניב",
+    gender: "M",
+    coins: 0,
+    createdAt: ISODate("2023-05-17T00:00:00Z"),
+    updatedAt: ISODate("2023-05-17T00:00:00Z"),
+    last_login_date: null,
+    groups: [group1Id, group2Id],
+    status: "active",
+    deleted: false
+  },
+  {
+    _id: userId2,
+    user_email: "ben@example.com",
+    phone_number: "058-555-5678",
+    password: "ben123", // remember to hash this password
+    photo_URl: "\\ServerName\\Photos\\MyPhoto.jpg",
+    first_name: "בני",
+    last_name: "חן",
+    gender: "F",
+    coins: 0,
+    createdAt: ISODate("2023-05-17T00:00:00Z"),
+    updatedAt: ISODate("2023-05-17T00:00:00Z"),
+    last_login_date: null,
+    groups: [group1Id],
+    status: "active",
+    deleted: false
+  },
+  {
+    _id: userId3,
+    user_email: "gal@example.com",
+    password: "gal123", // remember to hash this password
+    coins: 0,
+    createdAt: ISODate("2023-05-17T00:00:00Z"),
+    updatedAt: ISODate("2023-05-17T00:00:00Z"),
+    last_login_date: null,
+    groups: [group1Id,group5Id],
+    status: "inactive",
+    deleted: false
+  } ,
+  {
+    _id: userId4,
+    user_email: "amit@gmail.com",
+    phone_number: "052-385-5321",
+    password: "amit123", // remember to hash this password
+    photo_URl: "\\ServerName\\Photos\\MyPhoto.jpg",
+    first_name: "עמית",
+    last_name: "ניב",
+    gender: "M",
+    coins: 0,
+    createdAt: ISODate("2023-04-17T00:00:00Z"),
+    updatedAt: ISODate("2023-04-17T00:00:00Z"),
+    last_login_date: ISODate("2023-06-17T00:00:00Z"),
+    groups: [group1Id, group3Id],
+    status: "active",
+    deleted: false
+  },
+]);
+
+
+
+
+db.GroupRequests.insertMany([
+  {
+    _id: ObjectId(),
+    user_id: userId1,
+    group_name: "המכללה הטכנולוגית רופין",
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'pending'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId2,
+    group_name: "המכללה האקדמית רופין",
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'approved'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId1,
+    group_name: "המפעל",
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'pending'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId4,
+    group_name: "צורן והסביבה",
+    request_date: ISODate("2023-06-18T00:00:00Z"),
+    status: 'pending'
+   }
+]);
+
+
+
+
+
+db.Groups.insertMany([
+  {
+    _id: group1Id,
+    group_name: "כללי",
+    type: "GENERAL",
+    active: "active",
+    deleted: false
+  },
+  {
+    _id: group2Id,
+    group_name: "נתניה",
+    type: "CITIES",
+    locations: [
+      {
+        name: "נתניה כניסה מזרחית 1",
+        coordinates: { latitude: 32.323465, longitude: 34.868765 }
+      },
+      {
+        name: "נתניה כניסה מזרחית 2",
+        coordinates: { latitude: 32.323466, longitude: 34.868766 }
+      }
+    ],
+    active: "active",
+    deleted: false
+  },
+  {
+    _id: group3Id,
+    group_name: "הרצליה",
+    type: "CITIES",
+    locations: [
+      {
+         name: "הרצליה שדרות בן גוריון",
+         coordinates: { latitude: 32.165276, longitude: 34.843065 }
+      },
+      {
+        name: "הרצליה חוף השרון",
+        coordinates: { latitude: 32.165712, longitude: 34.816228 }
+      }
+    ],
+    active: "active",
+    deleted: false
+  },
+  {
+  _id: group4Id,
+  group_name: "תל אביב",
+  type: "CITIES",
+  locations: [
+    {
+      name: "דיזנגוף סנטר",
+      coordinates: { latitude: 32.077545, longitude: 34.774821 }
+    },
+    {
+      name: "צפון נמל תל אביב",
+      coordinates: { latitude: 32.099492, longitude: 34.774729 }
+    }
+  ],
+  active: "active",
+  deleted: false
+  },
+  {
+  _id: group5Id,
+  group_name: "חיפה",
+  type: "CITIES",
+  locations: [
+    {
+      name: "שדרות רוקח",
+      coordinates: { latitude: 32.818399, longitude: 34.988186 }
+    },
+    {
+      name: "כיכר המדינה",
+      coordinates: { latitude: 32.820877, longitude: 34.986197 }
+    }
+  ],
+  active: "active",
+  deleted: false
+  }
+]);
+
+
+
+db.JoinGroupRequests.insertMany([
+  {
+    _id: ObjectId(),
+    user_id: userId1,
+    group_id: group2Id,
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'approved'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId2,
+    group_id: group2Id,
+    request_date: ISODate("2023-05-17T00:00:00Z"),
+    status: 'pending'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId3,
+    group_id: group4Id,
+    request_date: ISODate("2023-07-17T00:00:00Z"),
+    status: 'pending'
+  },
+  {
+    _id: ObjectId(),
+    user_id: userId4,
+    group_id: group2Id,
+    request_date: ISODate("2023-07-21T00:00:00Z"),
+    status: 'pending'
+  }
+]);
+
+
+
+db.Tremps.insertMany([
+  {
+    _id: ObjectId(),
+    creator_id: userId1,
+    group_id: group1Id,
+    tremp_type: "driver",
+    create_date: ISODate("2023-05-17T00:00:00Z"),
+    tremp_time: ISODate("2023-10-01T10:00:00Z"),
+    from_root: {
+      name: "צומת פרדסיה",
+      coordinates: { latitude: 32.334455, longitude: 34.855667 }
+    },
+    to_root: {
+      name: "תחנת רכבת נתניה",
+      coordinates: { latitude: 32.323465, longitude: 34.868765 }
+    },
+    note: "יש להשתתף בהוצאות דלק",
+    seats_amount: 3,
+    users_in_tremp: [
+      {
+        user_id: userId1,
+        is_approved: "approved"
+      },
+      {
+        user_id: userId2,
+        is_approved: "approved"
+      }
+    ],
+    is_full: false,
+    chat_id: chatId1, // reference to a chat document
+    active: "active",
+    deleted: false
+  },
+  {
+    _id: ObjectId(),
+    creator_id: userId1,
+    group_id: group1Id,
+    tremp_type: "driver",
+    create_date: ISODate("2023-05-17T00:00:00Z"),
+    tremp_time: ISODate("2023-10-01T10:00:00Z"),
+    from_root: {
+      name: "צומת פרדסיה",
+      coordinates: { latitude: 32.334455, longitude: 34.855667 }
+    },
+    to_root: {
+      name: "תחנת רכבת נתניה",
+      coordinates: { latitude: 32.323465, longitude: 34.868765 }
+    },
+    note: "יש להשתתף בהוצאות דלק",
+    seats_amount: 3,
+    users_in_tremp: [
+      {
+        user_id: userId1,
+        is_approved: "approved"
+      },
+      {
+        user_id: userId2,
+        is_approved: "pending"
+      }
+    ],
+    is_full: false,
+    chat_id: chatId2, // reference to a chat document
+    active: "active",
+    deleted: false
+  },
+  {
+    _id: ObjectId(),
+    creator_id: userId4,
+    group_id: group1Id,
+    tremp_type: "hitchhiker",
+    create_date: ISODate("2023-06-17T00:00:00Z"),
+    tremp_time: ISODate("2023-06-18T10:00:00Z"),
+    from_root: {
+        name: "הרצליה שדרות בן גוריון",
+        coordinates: { latitude: 32.165276, longitude: 34.843065 }
+    },
+    to_root: {
+      name: "תחנת רכבת נתניה",
+      coordinates: { latitude: 32.323465, longitude: 34.868765 }
+    },
+    note: "מוכן להשתתף בהוצאות דלק",
+    seats_amount: 1,
+    users_in_tremp: [
+    ],
+    is_full: false,
+    chat_id: chatId3, // reference to a chat document
+    active: "active",
+    deleted: false
+  }
+]);
+
+
+
+
+// הוספת צ'אט חדש עם שני הודעות
+db.TrempsChats.insertMany([
+  {
+    _id: chatId1,
+    messages: [
+      {
+        sender_id: userId1,
+        timestamp: ISODate("2023-05-19T08:00:00Z"),
+        content: "היי, אני אתחיל בקצת איחור. האם ניתן לדחות את הפגישה ב-15 דקות?"
+      },
+      {
+        sender_id: userId2,
+        timestamp: ISODate("2023-05-19T08:05:00Z"),
+        content: "בטח, אין בעיה. רואים אותך בקרוב!"
+      }
+    ],
+    deleted: false
+  },
+  {
+    _id: chatId2,
+    messages: [
+      {
+        sender_id: userId1,
+        timestamp: ISODate("2023-05-19T08:00:00Z"),
+        content: "היי, אני אתחיל בקצת איחור. האם ניתן לדחות את הפגישה ב-15 דקות?"
+      },
+      {
+        sender_id: userId2,
+        timestamp: ISODate("2023-05-19T08:05:00Z"),
+        content: "בטח, אין בעיה. רואים אותך בקרוב!"
+      }
+    ],
+    deleted: false
+  }
+]);
+
+
+
+
+// Insert single document
+db.Benefits.insertOne({
+  _id: benefitId1,
+  benefit_image: "\\ServerName\\Photos\\MyPhoto.jpg",
+  benefit_name: "gift card 50שח",
+  price: 100,
+  quantity: 10,
+  collection_location: "נתניה בית המושבה",
+  deleted: false
+});
+
+// Insert multiple documents
+db.Benefits.insertMany([
+  {
+    _id: benefitId2,
+    benefit_image: "\\ServerName\\Photos\\AnotherPhoto.jpg",
+    benefit_name: "gift card 75שח",
+    price: 200,
+    quantity: 20,
+    collection_location: "Another Collection Location",
+    deleted: false
+  },
+  {
+    _id: benefitId3,
+    benefit_image: "\\ServerName\\Photos\\Photo3.jpg",
+    benefit_name: "gift card 100שח",
+    price: 300,
+    quantity: 15,
+    collection_location: "Tel Aviv",
+    deleted: false
+  },
+  {
+    _id: benefitId4,
+    benefit_image: "\\ServerName\\Photos\\Photo4.jpg",
+    benefit_name: "gift card 150שח",
+    price: 500,
+    quantity: 20,
+    collection_location: "Jerusalem",
+    deleted: false
+  },
+  {
+    _id: benefitId5,
+    benefit_image: "\\ServerName\\Photos\\Photo5.jpg",
+    benefit_name: "gift card 200שח",
+    price: 1000,
+    quantity: 25,
+    collection_location: "Haifa",
+    deleted: false
+  }
+]);
+
+
+
+// Store purchased benefits for each user
+db.UserBenefits.insertMany([
+  {
+    user_id: userId1,
+    benefit_id: benefitId1, 
+    purchase_date: ISODate("2023-05-20T00:00:00Z")
+  },
+  {
+    user_id: userId2,
+    benefit_id: benefitId1, 
+    purchase_date: ISODate("2023-05-20T00:00:00Z")
+  },
+  {
+    user_id: userId1,
+    benefit_id: benefitId2, 
+    purchase_date: ISODate("2023-06-20T00:00:00Z")
+  }
+]);
+
+print("Database setup completed successfully!");
+
+
+
+
+
+
+
+
+----------------------------------
+function findGroupIdByName(groupName) {
+  const group = db.Groups.findOne({ group_name: groupName });
+  if (group) {
+    return group._id;
+  } else {
+    return null;
+  }
+}
+function addUser(email, phoneNumber, password, firstName, lastName, gender) {
+  const groupId = findGroupIdByName("כללי");
+
+  try {
+    const result = db.Users.insertOne({
+      user_email: email,
+      phone_number: phoneNumber,
+      password: password,
+      photo_URl: null,
+      first_name: firstName,
+      last_name: lastName,
+      gender: gender,
+      coins: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      last_login_date: null,
+      groups: [groupId],
+      status: "active",
+      deleted: false
+    });
+
+    if (result.insertedId) {
+      return result.insertedId; 
+    } else {
+      return null; 
+    }
+  } catch (error) {
+    return null; 
+  }
+}
+
+
+
+
+
+
+function addUsers() {
+  const usersToAdd = [
+    {
+      email: "yossi@example.com",
+      phone: "054-123-4567",
+      password: "Bb987654",
+      firstName: "יוסי",
+      lastName: "לוי",
+      gender: "M"
+    },
+    {
+      email: "rivka@example.com",
+      phone: "050-555-7890",
+      password: "Cc654321",
+      firstName: "רבקה",
+      lastName: "גולדשטיין",
+      gender: "F"
+    },
+    {
+      email: "david@example.com",
+      phone: "053-222-1111",
+      password: "Dd456789",
+      firstName: "דוד",
+      lastName: "כהן",
+      gender: "M"
+    },
+    {
+      email: "miriam@example.com",
+      phone: "055-777-2222",
+      password: "Ee123789",
+      firstName: "מרים",
+      lastName: "פרידמן",
+      gender: "F"
+    },
+  ];
+
+  usersToAdd.forEach(user => {
+    const userId = addUser(user.email, user.phone, user.password, user.firstName, user.lastName, user.gender);
+     if (userId !== null) {
+        addTrempForUser(userId);
+     }
+  });
+}
+
+
+
+
+
+
+
+
+function getRandomUserFromRange(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomDateInRange(start, end) {
+  const randomTimestamp = start.getTime() + Math.random() * (end.getTime() - start.getTime());
+  return new Date(randomTimestamp);
+}
+
+function addTrempForUser(userId) {
+  const userIds = [userId1, userId2, userId3, userId4];
+  const randomUserIndex = getRandomUserFromRange(0, userIds.length - 1);
+  const randomUserId = userIds[randomUserIndex];
+  const seatsAmount = Math.floor(Math.random() * 5) + 1;
+  const today = new Date();
+  // Get the date one month earlier from today
+  const oneMonthEarlier = new Date(today);
+  oneMonthEarlier.setMonth(oneMonthEarlier.getMonth() - 1);
+
+  // Generate random dates within the range
+  const createDate = getRandomDateInRange(oneMonthEarlier, today);
+  const trempTime = new Date(createDate);
+   trempTime.setDate(trempTime.getDate() + 1);
+  // You can customize the tremp data as needed, for example:
+  db.Tremps.insertOne({
+    _id: ObjectId(),
+    creator_id: userId,
+    group_id: group1Id,
+    tremp_type: "driver",
+    create_date: createDate,
+    tremp_time: trempTime,
+    from_root: {
+        name: "תחנת רכבת נתניה",
+        coordinates: { latitude: 32.323465, longitude: 34.868765 }
+    },
+    to_root: {
+      name: "הרצליה שדרות בן גוריון",
+       coordinates: { latitude: 32.165276, longitude: 34.843065 }
+    },
+    note: "",
+    seats_amount: seatsAmount ,
+    users_in_tremp: [
+      {
+        user_id: randomUserId,
+        is_approved: "approved"
+      }
+    ],
+    is_full: false,
+    chat_id: chatId1, 
+    active: "active",
+    deleted: false
+    
+  });
+}
+
+
+
+
+
+addUsers();
+
+
